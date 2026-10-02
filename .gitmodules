@@ -3,7 +3,7 @@
 	url = https://github.com/sensibile/atheum.git
 [submodule "axiom"]
 	path = axiom
-	url = /Users/tonton/Documents/workspace/acropolis/axiom
+	url = https://github.com/sensibile/axiom.git
 [submodule "akashic"]
 	path = akashic
 	url = https://github.com/sensibile/akashic.git
