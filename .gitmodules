@@ -1,0 +1,6 @@
+[submodule "atheum"]
+	path = atheum
+	url = /Users/tonton/Documents/workspace/acropolis/atheum
+[submodule "axiom"]
+	path = axiom
+	url = /Users/tonton/Documents/workspace/acropolis/axiom
