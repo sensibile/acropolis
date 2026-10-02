@@ -1,6 +1,6 @@
 [submodule "atheum"]
 	path = atheum
-	url = /Users/tonton/Documents/workspace/acropolis/atheum
+	url = https://github.com/sensibile/atheum.git
 [submodule "axiom"]
 	path = axiom
 	url = /Users/tonton/Documents/workspace/acropolis/axiom
