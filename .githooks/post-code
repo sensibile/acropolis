@@ -1,5 +1,8 @@
 #!/bin/sh
 set -eu
-cd "$(git rev-parse --show-toplevel)"
+# Keep checkout path newlines; remove only Git's output delimiter.
+checkout=$(git rev-parse --show-toplevel && printf .)
+checkout=${checkout%.}
+cd "${checkout%?}"
 CHECK_PYTHON_FORMAT=write ./scripts/check-python
 exec python3 ./scripts/check-config
