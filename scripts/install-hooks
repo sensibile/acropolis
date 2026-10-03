@@ -122,14 +122,14 @@ if [ -L "$hooks" ]; then
 fi
 # Dormant files must not acquire hook authority when this directory is activated.
 for hook in "$hooks"/*; do
-  case "${hook##*/}" in review-gate|pre-push|pre-commit) continue ;; esac
+  case "${hook##*/}" in review-gate|documentation-gate|pre-push|pre-commit) continue ;; esac
   if [ -f "$hook" ] && [ -x "$hook" ]; then
     echo 'BLOCKED: unexpected executable shared hook exists; preserve it and reconcile manually' >&2
     exit 1
   fi
 done
 mkdir -p "$hooks"
-for name in review-gate pre-push pre-commit; do
+for name in review-gate documentation-gate pre-push pre-commit; do
   if [ -d "$hooks/$name" ]; then
     echo 'BLOCKED: installed hook destination is a directory; reconcile manually' >&2
     exit 1
@@ -138,6 +138,7 @@ done
 pending=$(mktemp -d "$hooks/.install.XXXXXX")
 trap 'rm -rf "$pending"' EXIT HUP INT TERM
 cp ./scripts/review-gate "$pending/review-gate"
+cp ./scripts/documentation-gate "$pending/documentation-gate"
 cat > "$pending/pre-push" <<'HOOK'
 #!/bin/sh
 set -eu
@@ -163,7 +164,7 @@ exec ./.githooks/pre-commit "$@"
 HOOK
 chmod +x "$pending/review-gate" "$pending/pre-push" "$pending/pre-commit"
 # Each published executable is complete before an atomic same-directory rename.
-for name in review-gate pre-push pre-commit; do
+for name in review-gate documentation-gate pre-push pre-commit; do
   mv -f "$pending/$name" "$hooks/$name"
 done
 git config --local core.hooksPath "$hooks"

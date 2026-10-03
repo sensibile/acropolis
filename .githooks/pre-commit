@@ -8,4 +8,5 @@ git diff --quiet || { echo "BLOCKED: unstaged changes" >&2; exit 1; }
 [ -z "$(git ls-files --others --exclude-standard)" ] || { echo "BLOCKED: untracked files" >&2; exit 1; }
 python3 ./scripts/check-config
 CHECK_PYTHON_FORMAT=check ./scripts/check-python
-exec python3 ./scripts/test-push-boundary
+python3 ./scripts/test-push-boundary
+exec python3 ./scripts/test-documentation-gate

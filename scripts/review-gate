@@ -596,6 +596,13 @@ def check_record(record, delivered=False):
     submodule_reviews(plan, record.get("submodules", {}))
 
 
+def documentation_only(base, head):
+    import runpy
+
+    validator = runpy.run_path(str(Path(__file__).with_name("documentation-gate")))
+    return validator["validate"](base, head)
+
+
 def main():
     mode = sys.argv[1]
     if mode == "prepare":
@@ -747,6 +754,57 @@ def main():
                 ref.startswith("refs/heads/") and ref != "refs/heads/main",
                 "only feature branches; main requires a PR",
             )
+            require(
+                "refs/heads/main" not in pushed_refs,
+                "PR target cannot be updated in the same push",
+            )
+            refs = advertised_refs(url, ref)
+            require(
+                refs.get(ref, "0" * len(head)) == old,
+                "remote branch changed during push",
+            )
+            target = refs.get("refs/heads/main")
+            require(target is not None, "remote main unavailable")
+            require(
+                bool(re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", target)),
+                "full SHA required",
+            )
+            if subprocess.run(
+                ["git", "cat-file", "-e", target + "^{commit}"], capture_output=True
+            ).returncode:
+                subprocess.run(
+                    [
+                        "git",
+                        "fetch",
+                        "--no-tags",
+                        "--no-write-fetch-head",
+                        "--",
+                        url,
+                        target,
+                    ],
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+            revision(target)
+            baseline = git("merge-base", target, head)
+            revision(head)
+            if set(old) != {"0"}:
+                revision(old)
+                require(
+                    subprocess.run(
+                        ["git", "merge-base", "--is-ancestor", old, head],
+                        capture_output=True,
+                    ).returncode
+                    == 0,
+                    "non-fast-forward update is blocked",
+                )
+            # Documentation automation targets main; upstream tracking is unrelated.
+            if documentation_only(baseline, head):
+                print(
+                    "pre-push: documentation policy passed; code/security reviews skipped"
+                )
+                continue
             key = identity({"url": url, "ref": ref, "remote_old": old, "head": head})
             record = load(store() / (key + ".json"))
             require(
@@ -759,7 +817,7 @@ def main():
                 "PR target is updated by the same push; push target separately, then prepare and review again",
             )
             check_record(record)
-        print("pre-push: sealed Codex Security and independent review verified")
+        print("pre-push: applicable documentation or sealed review gates verified")
     elif mode == "verify-submodule":
         require(
             len(sys.argv) in (5, 6), "verify-submodule RECEIPT BASE HEAD [CONSUMER_URL]"

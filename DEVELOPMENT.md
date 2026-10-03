@@ -33,7 +33,7 @@ Git common directory의 `push-reviews/`에 계획/등록 결과를 저장한다.
 
 ## PR
 
-문제·변경 결과, 계약/책임 변경, 검사 및 리뷰 대상 SHA와 결과, 미실행 이유, 위험·복구 방법을 적는다. 기본 squash merge이며 commit/push/merge는 각각 명시적 승인을 받는다. 하위 커밋을 먼저 원격에 올리고 acropolis에서 이전/이후 SHA, 관련 PR과 조합 검증을 기록한다.
+문제·변경 결과, 계약/책임 변경, 검사 및 리뷰 대상 SHA와 결과, 미실행 이유, 위험·복구 방법을 적는다. 기본 squash merge이며 commit은 검증 후 자동 수행하며 코드 push/merge는 명시적 승인을 받는다. 문서 전용 작업은 아래 gate 정책을 따른다. 하위 커밋을 먼저 원격에 올리고 acropolis에서 이전/이후 SHA, 관련 PR과 조합 검증을 기록한다.
 
 ## Producer 호환성
 
@@ -117,3 +117,9 @@ worktree 목록은 `--porcelain -z`와 NUL-safe reader로 읽어 줄바꿈이 �
 PR 요약에 포함된 Code Review와 Security Review는 모두 완료되어야 하며 각각의 커밋 ID를 전체 SHA로 해석하여 최신 head와 비교한다. 다른 커밋을 검토한 완료 row는 현재 작업의 완료 증거가 아니다.
 
 POSIX wrapper는 sentinel로 Git 경로 출력의 마지막 LF 하나만 제거하여 checkout 이름 끝의 줄바꿈을 보존한다. Python pre-commit도 bytes 경로를 같은 규칙으로 읽는다.
+
+## 문서 작업과 자동 커밋
+
+검증된 한 의도 단위는 적절한 시점에 별도 승인 없이 commit한다. 문서 전용 작업은 [문서 작업 규칙](docs/documentation-policy.md)에 따라 검증하고 push·PR 생성·squash merge까지 진행한다. 기존 코드 push·merge 승인 조건은 코드 작업에 적용한다.
+
+문서 전용 변경도 pre-push를 정상 실행한다. 원격 main과 head의 merge-base부터 누적 범위를 검사하며 documentation-policy GitHub job이 같은 문서 검사를 실행한다. `python3 scripts/documentation-gate BASE_SHA HEAD_SHA`로 로컬 검증한다. 코드 변경이 섞이면 보안·독립 리뷰 증거를 요구한다. 실행 예제 변경은 코드 작업으로 검토한다.

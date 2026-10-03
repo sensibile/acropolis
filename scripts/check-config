@@ -27,6 +27,13 @@ for name in ("akashic", "atheum", "axiom"):
     assert entry.startswith("160000 ") and entry.split()[2] == "0"
 for name in ("AGENTS.md", "DEVELOPMENT.md", ".github/pull_request_template.md"):
     assert Path(name).read_text().strip()
-for script in ("review-gate", "test-push-gate", "test-push-boundary", "check-config"):
+for script in (
+    "documentation-gate",
+    "test-documentation-gate",
+    "review-gate",
+    "test-push-gate",
+    "test-push-boundary",
+    "check-config",
+):
     ast.parse(Path("scripts", script).read_text())
 print("PASS: submodule configuration, guidance and gate syntax")

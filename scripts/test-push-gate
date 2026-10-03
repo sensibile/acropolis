@@ -166,6 +166,9 @@ with tempfile.TemporaryDirectory(prefix="push-gate-test-") as tmp:
     run(["git", "config", "user.email", "test@example.invalid"])
     (repo / "scripts").mkdir()
     shutil.copy2(root / "scripts/review-gate", repo / "scripts/review-gate")
+    shutil.copy2(
+        root / "scripts/documentation-gate", repo / "scripts/documentation-gate"
+    )
     shutil.copy2(root / "scripts/prepare-push", repo / "scripts/prepare-push")
     (repo / ".githooks").mkdir()
     shutil.copy2(root / ".githooks/pre-push", repo / ".githooks/pre-push")
@@ -748,6 +751,9 @@ with tempfile.TemporaryDirectory(prefix="push-gate-test-") as tmp:
     shutil.copytree(root / ".githooks", parent / ".githooks")
     (parent / "scripts").mkdir()
     shutil.copy2(root / "scripts/review-gate", parent / "scripts/review-gate")
+    shutil.copy2(
+        root / "scripts/documentation-gate", parent / "scripts/documentation-gate"
+    )
     run(["git", "config", "core.hooksPath", ".githooks"], cwd=parent)
     run(["git", "push", "--dry-run", "origin", "feature"], cwd=parent)
     child_receipt_bytes = receiptpath.read_bytes()
