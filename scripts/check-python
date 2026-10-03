@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+cd "$(git rev-parse --show-toplevel)"
+ruff=.cache/dev-tools/bin/ruff
+[ -x "$ruff" ] || { echo 'BLOCKED: install requirements-dev.txt in .cache/dev-tools' >&2; exit 1; }
+[ "$("$ruff" --version)" = 'ruff 0.13.3' ] || { echo 'BLOCKED: Ruff version mismatch' >&2; exit 1; }
+set -- scripts/review-gate scripts/test-push-boundary scripts/test-push-gate scripts/check-config scripts/pr-review-status
+if [ "${CHECK_PYTHON_FORMAT:-check}" = write ]; then
+  "$ruff" format "$@"
+else
+  "$ruff" format --check "$@"
+fi
+exec "$ruff" check --select E9,F "$@"

@@ -1,3 +1,4 @@
 
 # Python hook-test bytecode is local cache.
 __pycache__/
+.cache/

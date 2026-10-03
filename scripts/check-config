@@ -3,17 +3,30 @@ import subprocess
 import configparser
 from pathlib import Path
 import ast
+import sys
+
+if sys.flags.optimize:
+    sys.exit(
+        "BLOCKED: configuration checks require Python assertions; disable optimization"
+    )
+
 cfg = configparser.ConfigParser()
-cfg.read('.gitmodules')
-assert {s for s in cfg.sections()} == {'submodule "akashic"', 'submodule "atheum"', 'submodule "axiom"'}
-for name in ('akashic', 'atheum', 'axiom'):
+cfg.read(".gitmodules")
+assert {s for s in cfg.sections()} == {
+    'submodule "akashic"',
+    'submodule "atheum"',
+    'submodule "axiom"',
+}
+for name in ("akashic", "atheum", "axiom"):
     section = cfg['submodule "' + name + '"']
-    assert section['path'] == name
-    assert section['url'] == 'https://github.com/sensibile/' + name + '.git'
-    entry = subprocess.check_output(['git', 'ls-files', '--stage', '--', name], text=True)
-    assert entry.startswith('160000 ') and entry.split()[2] == '0'
-for name in ('AGENTS.md', 'DEVELOPMENT.md', '.github/pull_request_template.md'):
+    assert section["path"] == name
+    assert section["url"] == "https://github.com/sensibile/" + name + ".git"
+    entry = subprocess.check_output(
+        ["git", "ls-files", "--stage", "--", name], text=True
+    )
+    assert entry.startswith("160000 ") and entry.split()[2] == "0"
+for name in ("AGENTS.md", "DEVELOPMENT.md", ".github/pull_request_template.md"):
     assert Path(name).read_text().strip()
-for script in ('review-gate', 'test-push-gate', 'test-push-boundary', 'check-config'):
-    ast.parse(Path('scripts', script).read_text())
-print('PASS: submodule configuration, guidance and gate syntax')
+for script in ("review-gate", "test-push-gate", "test-push-boundary", "check-config"):
+    ast.parse(Path("scripts", script).read_text())
+print("PASS: submodule configuration, guidance and gate syntax")
