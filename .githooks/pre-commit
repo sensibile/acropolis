@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+# Keep checkout path newlines; remove only Git's output delimiter.
+checkout=$(git rev-parse --show-toplevel && printf .)
+checkout=${checkout%.}
+cd "${checkout%?}"
+git diff --quiet || { echo "BLOCKED: unstaged changes" >&2; exit 1; }
+[ -z "$(git ls-files --others --exclude-standard)" ] || { echo "BLOCKED: untracked files" >&2; exit 1; }
+python3 ./scripts/check-config
+CHECK_PYTHON_FORMAT=check ./scripts/check-python
+exec python3 ./scripts/test-push-boundary

@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+# Keep checkout path newlines; remove only Git's output delimiter.
+checkout=$(git rev-parse --show-toplevel && printf .)
+checkout=${checkout%.}
+cd "${checkout%?}"
+ruff=.cache/dev-tools/bin/ruff
+[ -x "$ruff" ] || { echo 'BLOCKED: install requirements-dev.txt in .cache/dev-tools' >&2; exit 1; }
+[ "$("$ruff" --version)" = 'ruff 0.13.3' ] || { echo 'BLOCKED: Ruff version mismatch' >&2; exit 1; }
+set -- scripts/review-gate scripts/test-push-boundary scripts/test-push-gate scripts/check-config scripts/pr-review-status
+if [ "${CHECK_PYTHON_FORMAT:-check}" = write ]; then
+  "$ruff" format --no-cache "$@"
+else
+  "$ruff" format --no-cache --check "$@"
+fi
+exec "$ruff" check --no-cache --select E9,F "$@"
