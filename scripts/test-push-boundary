@@ -115,7 +115,7 @@ with tempfile.TemporaryDirectory(prefix="push-boundary-") as directory:
     run(["git", "worktree", "add", "-b", "old-feature", str(old_tree), baseline])
     run(["git", "checkout", "-b", "feature"])
     (repo / "scripts").mkdir()
-    for name in ("review-gate", "prepare-push", "install-hooks"):
+    for name in ("review-gate", "documentation-gate", "prepare-push", "install-hooks"):
         shutil.copy2(ROOT / "scripts" / name, repo / "scripts" / name)
     run(["git", "add", "."])
     run(["git", "commit", "-m", "test: feature"])

@@ -14,7 +14,7 @@
 - main 변경은 작업 브랜치와 PR을 거친다. Draft PR을 허용한다. 기본 squash merge이며 단계 이력이 중요할 때만 일반 merge를 선택한다.
 - PR은 문제와 변경 결과, 주요 계약/책임 변경, 검사 및 리뷰 대상 커밋과 결과, 미실행 이유, 위험과 복구 방법을 설명한다. 리뷰 후 변경은 영향 범위를 재검사한다.
 - submodule PR은 소비자 계약 영향을 설명한다. acropolis PR은 이전/이후 커밋, 관련 PR, 조합 검증을 기록한다. 하위 커밋의 원격 존재를 확인한 뒤 상위 포인터를 push한다.
-- 에이전트의 commit, push, merge는 각각 BOSS의 명시적 승인에 따른다. 공유 이력을 임의로 변경하지 않는다.
+- 에이전트는 검증된 한 의도 단위로 적절한 시점에 자동 commit한다. 문서 전용 작업은 문서 gate 통과 후 push·PR·squash merge까지 별도 승인 없이 진행한다. 코드 작업의 push·merge는 BOSS의 승인에 따른다. 공유 이력을 임의로 변경하지 않는다.
 - 설치 및 리뷰 증거 형식은 `DEVELOPMENT.md`를 따른다. 로컬 훅은 GitHub 서버 검사를 대신하지 않으며 우회 가능하다.
 
 ## Codex push 준비 절차
@@ -26,3 +26,9 @@
 - `review-gate record PLAN_JSON COMPLETED_SCAN_DIR AGENT_JSON`으로 완료 결과를 등록한다. Git pre-push가 canonical seal과 범위·내용 변경을 다시 검증한다. 수동 security pass는 허용하지 않는다.
 - 검사 누락/범위 축소/미해결 coverage/취약점이 있으면 차단한다. 발견 사항을 자동 무시하지 않는다. 검사 이후 커밋이 바뀌면 새 계획과 새 검사를 수행한다.
 - submodule 커밋의 보안은 상위 포인터 검사만으로 보증되지 않는다. 각 하위 저장소를 별도로 검사하고 push한다.
+
+## 공통 문서 gate 및 브랜치 정책
+
+- 새 브랜치는 `feat|fix|refactor|test|docs|chore` 중 작업 의도에 맞는 `<type>/<short-task-slug>`를 사용한다. `codex/` 기본값보다 우선한다.
+- [문서 작업 규칙](docs/documentation-policy.md)을 적용한다. 문서 전용 작업은 문서 gate를 통과하면 코드·독립·보안 리뷰를 생략한다. 코드 또는 실행 설정 변경이 섞이면 기존 리뷰 절차를 적용한다.
+- 문서 gate 구현·변경 자체는 코드 작업이다. 자동 commit 권한이 코드 push·merge나 실패한 gate 우회를 허용하지 않는다.
