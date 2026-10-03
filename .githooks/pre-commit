@@ -3,4 +3,5 @@ set -eu
 cd "$(git rev-parse --show-toplevel)"
 git diff --quiet || { echo "BLOCKED: unstaged changes" >&2; exit 1; }
 [ -z "$(git ls-files --others --exclude-standard)" ] || { echo "BLOCKED: untracked files" >&2; exit 1; }
-exec python3 ./scripts/check-config
+python3 ./scripts/check-config
+exec python3 ./scripts/test-push-boundary
