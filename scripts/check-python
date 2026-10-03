@@ -6,8 +6,8 @@ ruff=.cache/dev-tools/bin/ruff
 [ "$("$ruff" --version)" = 'ruff 0.13.3' ] || { echo 'BLOCKED: Ruff version mismatch' >&2; exit 1; }
 set -- scripts/review-gate scripts/test-push-boundary scripts/test-push-gate scripts/check-config scripts/pr-review-status
 if [ "${CHECK_PYTHON_FORMAT:-check}" = write ]; then
-  "$ruff" format "$@"
+  "$ruff" format --no-cache "$@"
 else
-  "$ruff" format --check "$@"
+  "$ruff" format --no-cache --check "$@"
 fi
-exec "$ruff" check --select E9,F "$@"
+exec "$ruff" check --no-cache --select E9,F "$@"

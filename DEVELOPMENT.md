@@ -70,7 +70,7 @@ push 성공은 PR 피드백 처리 완료가 아니다. 최신 head에서 봇 �
 
 ## acropolis Python 검사 설치
 
-`uv venv .cache/dev-tools` 다음 `uv pip install --python .cache/dev-tools/bin/python -r requirements-dev.txt`로 고정 Ruff를 설치한다. post-code는 gate Python 파일을 포맷하고 E9/F 정적 검사를 실행한다. pre-commit의 `scripts/check-python`은 동일 파일의 포맷을 check-only로 확인하고 정적 검사를 수행한다. 누락/다른 버전은 차단하며 hook이 도구를 설치하거나 stage하지 않는다.
+`uv venv .cache/dev-tools` 다음 `uv pip install --python .cache/dev-tools/bin/python -r requirements-dev.txt`로 고정 Ruff를 설치한다. post-code는 gate Python 파일을 포맷하고 E9/F 정적 검사를 실행한다. pre-commit의 `scripts/check-python`은 동일 파일의 포맷을 check-only로 확인하고 정적 검사를 수행한다. Ruff format/check 모두 --no-cache로 실행하여 cold cache에서도 파일을 생성하지 않는다. 누락/다른 버전은 차단하며 hook이 도구를 설치하거나 stage하지 않는다.
 
 ## Endpoint 리뷰의 이력 제한과 설치 보완
 
@@ -105,3 +105,9 @@ worktree 목록은 `--porcelain -z`와 NUL-safe reader로 읽어 줄바꿈이 �
 저장소 URL 값은 Git 출력의 마지막 LF만 제거하고 앞뒤 space 문자를 보존한다. URL 내부의 CR·LF·TAB은 파서/record 의미가 달라질 수 있으므로 명시적으로 거부한다. 커밋된 consumer URL과 원격 URL 확장·준비·push 비교가 같은 보존 규칙을 사용한다.
 
 훅 설치는 현재 비활성인 onbranch/gitdir 조건까지 고려해 conditional include를 보수적으로 거부한다. 훅과 무관한 조건부 include도 이 설치 방식에서는 지원하지 않는다. 설치 후 소유자가 설정을 변경하거나 훅을 우회하는 경우까지 강제할 수는 없다.
+
+계획 검증은 Git·원격 관측을 shell에서 불변 PlanSnapshot으로 수집한 뒤 순수 policy 함수에 명시적 입력으로 전달한다. policy는 오류 tuple을 반환하며 I/O를 수행하지 않는다. URL canonical 경로와 replacement/graft 검사는 shell의 admission 경계에 둔다.
+
+설치 전에 모든 등록 checkout의 실행 가능한 .githooks 파일을 검사한다. pre-commit은 dispatch하고 기존의 정확한 managed pre-push만 공유 gate로 교체한다. post-code는 Git 이벤트가 아닌 명시적 편집 작업이다. commit-msg 등 추가 훅과 커스텀 pre-push는 임의로 비활성화하지 않고 설치를 차단하여 수동 조정을 요구한다.
+
+경로를 담은 Git 출력은 bytes로 읽고 newline 변환 없이 decode한다. CR과 LF 경로를 구분하며 커밋된 .gitmodules는 regular blob 모드만 허용한다. symlink와 다른 tree entry는 파싱 전에 차단한다.
