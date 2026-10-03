@@ -4,7 +4,7 @@
 
 ## 작업 기록 위치와 관리
 
-개발 착수 때 [작업 기록 템플릿](task-record-template.md)을 사용한다. `git rev-parse --git-common-dir`로 확인한 Git common directory의 task-records 디렉터리에 작업 ID별 Markdown 파일을 둔다. linked worktree 사이에서 같은 작업 기록을 재사용하며 저장소 source나 PR에 자동 첨부하지 않는다. 기록 경로는 재개 인계에 포함한다. 새 작업에는 새 기록을 만들며 이전 승인을 무관한 작업에 적용하지 않는다.
+개발 착수 때 [작업 기록 템플릿](task-record-template.md)을 사용한다. 저장소의 Git common directory의 task-records 디렉터리에 작업 ID별 Markdown 파일을 둔다. linked worktree 사이에서 같은 작업 기록을 재사용하며 저장소 source나 PR에 자동 첨부하지 않는다. 기록 경로는 재개 인계에 포함한다. 새 작업에는 새 기록을 만들며 이전 승인을 무관한 작업에 적용하지 않는다.
 
 기록은 목적, 요청한 완료 상태, 저장소·worktree·branch·PR, 승인 범위, 도구 실행 경로, 검증된 SHA, 단계 결과와 다음 행동을 포함한다. 주요 승인, 경로 변경, 검사 결과와 원격 작업 후 갱신한다. 요청한 상태와 실제 상태를 별도로 적는다. 기록은 로컬 변경 가능한 인계 자료이며 권한 토큰이나 보안 gate 증거가 아니다. 원격 상태와 검토 범위는 기존 절차대로 새로 확인한다.
 
@@ -29,9 +29,9 @@
 1. BOSS가 요청한 완료 상태를 먼저 적는다. 로컬 수정·commit, 원격 PR, merge를 구분하며 PR 생성 승인을 merge 승인으로 확대하지 않는다.
 2. 원격 source/target SHA와 관련 PR의 OPEN/MERGED/CLOSED 상태를 새로 확인한다. merge되거나 닫힌 작업은 이전 브랜치에 무조건 이어 쓰지 않는다. worktree와 실제 PR 대상을 확인한다.
 3. 누적 변경이 문서 전용인지 코드가 섞였는지 판별하고 해당 gate를 수행한다. post-code 후 diff를 확인하고 의미 있는 단위로 commit한다. source/target·head·검토 범위와 실제 검사 결과를 기록한다.
-4. 기존 `scripts/prepare-push`, `scripts/review-gate`, pre-push 절차를 적용한다. 코드 변경은 정확한 누적 범위의 보안·독립 리뷰와 seal을 요구한다. 문서 전용 경로는 문서 정책과 실제 문서 gate를 따른다. 차단된 gate를 무시하거나 수동 통과 증거를 만들지 않는다.
+4. [개발 훅 운영](../DEVELOPMENT.md)의 기존 push 준비·리뷰 등록·pre-push 절차를 적용한다. 코드 변경은 정확한 누적 범위의 보안·독립 리뷰와 seal을 요구한다. 문서 전용 경로는 문서 정책과 실제 문서 gate를 따른다. 차단된 gate를 무시하거나 수동 통과 증거를 만들지 않는다.
 5. 승인된 push를 실행하고 성공 exit 및 원격 branch SHA를 확인한다. 로컬 commit만 존재하거나 push가 실패했으면 PR 생성 단계가 완료된 것으로 적지 않는다.
-6. 기존 OPEN PR은 갱신하고 없으면 일반 PR을 생성한다. `gh pr create`에 Draft 옵션을 붙이지 않는다. PR URL, head/base, 실제 head SHA와 isDraft=false를 `gh pr view`로 확인한다. 이미 존재하는 PR을 중복 생성하지 않는다. 앱에서는 PR을 작업에 attach한다.
+6. 기존 OPEN PR은 갱신하고 없으면 일반 PR을 생성한다. Draft로 생성하지 않는다. PR URL, head/base, 실제 head SHA와 Draft 여부를 GitHub의 현재 PR 상태로 확인한다. 이미 존재하는 PR을 중복 생성하지 않는다. 앱에서는 PR을 작업에 attach한다.
 7. GitHub 검사 결과를 확인해 PASS·실패·대기를 구분한다. 로컬 gate 통과와 서버 검사 통과는 별개다. PR 요청의 전달 완료에는 실제 URL·원격 head·일반 PR 상태가 필요하며, merge 완료에는 허용된 merge의 실제 결과가 추가로 필요하다.
 8. 티켓과 작업 기록에 현재 상태·결과·PR 링크·남은 일을 갱신한다. 최종 답변은 실제 도달한 상태를 설명한다. 검사를 기다리는 PR을 merge 완료로 보고하지 않는다.
 
