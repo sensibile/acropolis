@@ -765,6 +765,27 @@ def main():
             )
             target = refs.get("refs/heads/main")
             require(target is not None, "remote main unavailable")
+            require(
+                bool(re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", target)),
+                "full SHA required",
+            )
+            if subprocess.run(
+                ["git", "cat-file", "-e", target + "^{commit}"], capture_output=True
+            ).returncode:
+                subprocess.run(
+                    [
+                        "git",
+                        "fetch",
+                        "--no-tags",
+                        "--no-write-fetch-head",
+                        "--",
+                        url,
+                        target,
+                    ],
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
             revision(target)
             baseline = git("merge-base", target, head)
             revision(head)
