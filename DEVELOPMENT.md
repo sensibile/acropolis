@@ -33,7 +33,7 @@ Git common directory의 `push-reviews/`에 계획/등록 결과를 저장한다.
 
 ## PR
 
-문제·변경 결과, 계약/책임 변경, 검사 및 리뷰 대상 SHA와 결과, 미실행 이유, 위험·복구 방법을 적는다. 기본 squash merge이며 commit/push/merge는 각각 명시적 승인을 받는다. 하위 커밋을 먼저 원격에 올리고 acropolis에서 이전/이후 SHA, 관련 PR과 조합 검증을 기록한다.
+문제·변경 결과, 계약/책임 변경, 검사 및 리뷰 대상 SHA와 결과, 미실행 이유, 위험·복구 방법을 적는다. 기본 squash merge다. 승인된 작업 범위의 로컬 commit은 별도 승인 없이 수행하며 push/PR 생성/merge는 각각 명시적 승인을 받는다. 하위 커밋을 먼저 원격에 올리고 acropolis에서 이전/이후 SHA, 관련 PR과 조합 검증을 기록한다.
 
 ## Producer 호환성
 
