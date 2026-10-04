@@ -29,7 +29,7 @@
 1. BOSS가 요청한 완료 상태를 먼저 적는다. 로컬 수정·commit, 원격 PR, merge를 구분하며 PR 생성 승인을 merge 승인으로 확대하지 않는다.
 2. 원격 source/target SHA와 관련 PR의 OPEN/MERGED/CLOSED 상태를 새로 확인한다. merge되거나 닫힌 작업은 이전 브랜치에 무조건 이어 쓰지 않는다. worktree와 실제 PR 대상을 확인한다.
 3. 누적 변경이 문서 전용인지 코드가 섞였는지 판별하고 해당 gate를 수행한다. post-code 후 diff를 확인하고 의미 있는 단위로 commit한다. source/target·head·검토 범위와 실제 검사 결과를 기록한다.
-4. [개발 훅 운영](../DEVELOPMENT.md)의 기존 push 준비·리뷰 등록·pre-push 절차를 적용한다. 코드 변경은 정확한 누적 범위의 보안·독립 리뷰와 seal을 요구한다. 문서 전용 경로는 문서 정책과 실제 문서 gate를 따른다. 차단된 gate를 무시하거나 수동 통과 증거를 만들지 않는다.
+4. [개발 훅 운영](../DEVELOPMENT.md)의 기존 push 준비·리뷰 등록·pre-push 절차를 적용한다. 코드 변경은 정확한 누적 범위의 보안 검사·Codex 리뷰와 seal을 요구한다. 문서 전용 경로는 문서 정책과 실제 문서 gate를 따른다. 차단된 gate를 무시하거나 수동 통과 증거를 만들지 않는다.
 5. 승인된 push를 실행하고 성공 exit 및 원격 branch SHA를 확인한다. 로컬 commit만 존재하거나 push가 실패했으면 PR 생성 단계가 완료된 것으로 적지 않는다.
 6. 기존 OPEN PR은 갱신하고 없으면 일반 PR을 생성한다. Draft로 생성하지 않는다. PR URL, head/base, 실제 head SHA와 Draft 여부를 GitHub의 현재 PR 상태로 확인한다. 이미 존재하는 PR을 중복 생성하지 않는다. 앱에서는 PR을 작업에 attach한다.
 7. GitHub 검사 결과를 확인해 PASS·실패·대기를 구분한다. 로컬 gate 통과와 서버 검사 통과는 별개다. PR 요청의 전달 완료에는 실제 URL·원격 head·일반 PR 상태가 필요하며, merge 완료에는 허용된 merge의 실제 결과가 추가로 필요하다.
