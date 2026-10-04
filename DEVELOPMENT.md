@@ -123,3 +123,7 @@ POSIX wrapper는 sentinel로 Git 경로 출력의 마지막 LF 하나만 제거�
 검증된 한 의도 단위는 적절한 시점에 별도 승인 없이 commit한다. 문서 전용 작업은 [문서 작업 규칙](docs/documentation-policy.md)에 따라 검증하고 push·PR 생성·squash merge까지 진행한다. 기존 코드 push·merge 승인 조건은 코드 작업에 적용한다.
 
 문서 전용 변경도 pre-push를 정상 실행한다. 원격 main과 head의 merge-base부터 누적 범위를 검사하며 documentation-policy GitHub job이 같은 문서 검사를 실행한다. `python3 scripts/documentation-gate BASE_SHA HEAD_SHA`로 로컬 검증한다. 코드 변경이 섞이면 보안·독립 리뷰 증거를 요구한다. 실행 예제 변경은 코드 작업으로 검토한다.
+
+## 작업 기록과 전달 완료
+
+[작업 승인 기록과 PR 전달 절차](docs/task-delivery.md)와 [기록 템플릿](docs/task-record-template.md)을 사용한다. 실제 승인 근거와 범위는 작업별 로컬 기록에 보존하고, 자동 승인 거절·도구 실패·검사 finding을 구분한다. 기록은 기존 hook·보안 seal·서버 검사를 대신하지 않는다. 일반 PR 생성 또는 갱신 후 원격 head와 상태를 확인하고 작업에 attach하여 실제 전달 결과를 보고한다.
