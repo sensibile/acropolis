@@ -34,7 +34,24 @@ Git common directory의 `push-reviews/`에 계획/등록 결과를 저장한다.
 
 ## PR
 
-문제·변경 결과, 계약/책임 변경, 검사 및 리뷰 대상 SHA와 결과, 미실행 이유, 위험·복구 방법을 적는다. 기본 squash merge이며 commit은 검증 후 자동 수행하며 코드 push/merge는 명시적 승인을 받는다. 문서 전용 작업은 아래 gate 정책을 따른다. 하위 커밋을 먼저 원격에 올리고 acropolis에서 이전/이후 SHA, 관련 PR과 조합 검증을 기록한다.
+문제·변경 결과, 계약/책임 변경, 검사 및 리뷰 대상 SHA와 결과, 미실행 이유, 위험·복구 방법을 적는다. 기본 squash merge이며 commit은 검증 후 자동 수행하며 코드 push/merge는 명시적 승인을 받는다. 문서 전용 작업은 아래 gate 정책을 따른다. 하위 커밋을 먼저 원격에 올리고 acropolis에서 이전/이후 SHA, 관련 PR과 조합 검증을 기록한다. PR을 연 뒤의 Codex 리뷰 요청과 머지는 아래 Codex 리뷰 gate 절차를 따른다.
+
+## Codex 리뷰 gate와 PR 머지
+
+`scripts/codex_review_gate.py`와 `.github/workflows/codex-review-gate.yml`은 sensibile/taeguk main `062d95d`의 파일을 그대로 가져왔다. 테스트는 같은 커밋의 `tests/test_codex_review_gate.py`를 `scripts/test-codex-review-gate`로 옮겼다. 저장소 이름, 실행 진입점, bytecode·최적화 차단만 다르다. 원본 갱신을 따라가기 쉽도록 두 Python 파일은 Ruff 포맷 대상에 넣지 않는다. 테스트는 pre-commit과 `codex-review-gate-tests` GitHub job에서 실행한다. 표준 라이브러리와 `gh`만 사용한다.
+
+위 Push 준비로 push한 뒤 PR을 맡은 Claude Code 세션이 다음 순서로 진행한다. 리뷰 요청과 머지는 세션의 `gh` 인증 계정인 BOSS 계정으로 한다(2026-10-25 BOSS 결정). Codex는 `github-actions[bot]`의 요청에는 응답하지 않았고 사람 계정 요청에는 13초~2분 안에 응답했다(sensibile/taeguk 관측).
+
+1. PR은 제목과 본문에 `@codex` 문자열 없이 연다. 그러면 Codex가 PR 생성 리뷰를 스스로 시작한다. 세션은 2분 동안 그 head에 대한 Codex 요약 댓글(`codex-review-state`)이 붙는지 확인하고, 붙지 않을 때만 `@codex review` 댓글을 남긴다. PR 제목·본문·댓글에는 리뷰를 요청하는 댓글 말고는 `@codex` 문자열을 쓰지 않는다. Codex는 백틱 안의 문자열도 멘션으로 읽고 리뷰 대신 클라우드 작업을 시작한다. 가리킬 때는 "Codex 리뷰 요청"처럼 풀어 쓴다. 리뷰 자체에는 Codex 클라우드 환경이 필요하지 않다.
+2. `Codex review gate` workflow는 PR head 커밋의 Codex 리뷰 결과를 commit status `codex-review`로 게시하는 판정만 한다. 리뷰를 요청하거나 머지하지 않으며 시간 기준 통과 규칙도 없다. 근거는 `chatgpt-codex-connector[bot]` 요약 댓글의 `codex-review-state`다. head에 대한 Code Review가 `completed`이고 `has_unresolved_findings`가 false이면 success, 미해소 지적이 있으면 failure, 그 밖에는 pending이다. 값이 null이면 같은 head에 대한 Codex의 최신 결과 댓글이 "Didn't find any major issues"이고 Codex가 시작한 미해결 리뷰 thread가 0개일 때만 success다. 확인할 수 없으면 pending이다. Codex가 head를 리뷰하지 않으면 pending에 머물고 시간이 지나도 바뀌지 않는다. thread를 해결하는 이벤트로는 gate가 다시 실행되지 않으므로 다음 이벤트가 있어야 다시 판정한다. 새 커밋 push는 status를 pending으로 되돌린다. Codex 요약 댓글이 삭제되거나 PR base가 바뀌면 gate가 head 표식이 담긴 무효 표식 댓글을 남기고, 그 뒤 Codex가 요약을 갱신해야 다시 판정한다.
+3. 세션은 PR을 열고 2분 안에 요약이 붙지 않았을 때, 새 커밋을 push했을 때, gate가 무효 표식을 남겼을 때 그 head에 `@codex review`를 한 번 남긴다. 그 head에 대한 결과 댓글이 이미 있거나 리뷰가 `running`이면 남기지 않는다. 요청 뒤 10분 넘게 시작하지 않거나 `running`에서 10분 넘게 멈추면 한 번 더 남기고, 그래도 안 되면 BOSS에게 보고한다. 멈춤은 Auto-fix 이벤트로 전달되지 않으므로 세션이 직접 다시 확인한다. 응답이 없다고 리뷰 없이 머지하지 않는다.
+4. head의 `codex-review`가 success이고 그 head에 미해결 리뷰 thread가 없으며 `./scripts/pr-review-status`가 exit 0이면 `gh pr merge <번호> --squash --auto --match-head-commit <리뷰한 head SHA>`로 auto-merge를 켠다. 코드 작업은 그 전에 BOSS의 머지 승인을 받는다. 문서 전용 작업은 [문서 작업 규칙](docs/documentation-policy.md)대로 별도 승인 없이 켜지만 같은 status 조건을 만족해야 한다. draft PR과 `no-auto-merge` label이 붙은 PR에는 켜지 않는다. 이 opt-out은 세션이 지키는 운영 규칙이며 GitHub 머지 조건이 아니다. 이미 켠 뒤 멈추려면 PR을 draft로 바꾸거나 auto-merge를 해제한다. 세션이 없는 PR은 status가 success여도 사람이 머지할 때까지 대기한다.
+
+`codex-review` status는 GitHub ruleset이 강제하는 머지 조건이고, `./scripts/pr-review-status`는 세션이 머지 직전에 Security Review row와 PR 머지 상태까지 다시 읽는 관측 도구다. 둘 중 하나가 다른 하나를 대신하지 않는다.
+
+요약 댓글의 상태 표식은 Codex의 공개 API가 아니다. 형식이 바뀌면 gate는 pending으로 남고 필수 체크가 머지를 막는다. 이때 Codex 결과를 직접 확인하고 BOSS 확인을 받아 처리한다. workflow는 `pull_request_target`과 `issue_comment`로만 실행되고 기본 브랜치의 workflow와 스크립트를 실행하므로 PR이 자기 판정 코드를 바꿀 수 없다. 그래서 gate를 처음 도입하는 PR 자신은 판정받지 못한다. `gate` job 권한은 `statuses: write` 외에는 read다. push 권한이 있는 사람은 다른 workflow로 같은 이름의 status를 게시할 수 있으므로 gate는 writer를 신뢰하는 자동화이며 writer에 대한 보안 경계가 아니다. fork PR과 기본 브랜치가 아닌 base로 향하는 PR은 처리하지 않는다. gate는 acropolis PR만 판정한다. submodule 저장소의 리뷰와 머지는 각 저장소의 절차를 따른다.
+
+GitHub 설정: gate PR이 main에 들어간 뒤 ruleset `main protection`(id 25699728)의 필수 체크에 `codex-review`(integration 15368)를 추가한다. 기본 브랜치에 없는 workflow는 댓글 이벤트에 반응하지 않기 때문이다. status context 이름을 바꾸면 ruleset도 함께 갱신한다. auto-merge opt-out용 `no-auto-merge` label을 둔다. 같은 시점에 머지 전 PR 브랜치가 최신 main을 포함하도록 요구한다(`strict_required_status_checks_policy`, 2026-10-26 BOSS 결정). 그래서 squash 결과가 PR 단계에서 검사한 내용과 같다. main이 앞서 나가 PR이 뒤처지면 auto-merge는 대기한다. 세션이 `gh pr update-branch`로 갱신하면 head가 바뀌므로 3단계대로 Codex 리뷰를 다시 요청하고 새 head에 대해 4단계부터 다시 진행한다. 하위 커밋을 가리키는 gitlink가 바뀐 상태라면 갱신 뒤에도 위 Push 준비의 하위 증거 조건을 다시 확인한다.
 
 ## Producer 호환성
 
