@@ -30,7 +30,7 @@
 ## 공통 문서 gate 및 브랜치 정책
 
 - 새 브랜치는 `feat|fix|refactor|test|docs|chore` 중 작업 의도에 맞는 `<type>/<short-task-slug>`를 사용한다. `codex/` 기본값보다 우선한다.
-- [문서 작업 규칙](docs/documentation-policy.md)을 적용한다. 문서 전용 작업은 문서 gate를 통과하면 코드·독립·보안 리뷰를 생략한다. 코드 또는 실행 설정 변경이 섞이면 기존 리뷰 절차를 적용한다.
+- [문서 작업 규칙](docs/documentation-policy.md)을 적용한다. 문서 전용 작업은 문서 gate를 통과하면 push 전 로컬 보안 검사와 Codex 자체·독립 리뷰를 생략한다. PR의 GitHub Codex 리뷰와 `codex-review` status는 문서 전용 PR에도 적용한다(DEVELOPMENT.md의 Codex 리뷰 gate). 코드 또는 실행 설정 변경이 섞이면 기존 리뷰 절차를 적용한다.
 - 문서 gate 구현·변경 자체는 코드 작업이다. 자동 commit 권한이 코드 push·merge나 실패한 gate 우회를 허용하지 않는다.
 
 ## 작업 승인 기록과 PR 전달
