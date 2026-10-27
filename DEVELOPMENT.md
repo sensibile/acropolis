@@ -38,7 +38,7 @@ Git common directory의 `push-reviews/`에 계획/등록 결과를 저장한다.
 
 ## Codex 리뷰 gate와 PR 머지
 
-`scripts/codex_review_gate.py`와 `.github/workflows/codex-review-gate.yml`은 sensibile/taeguk main `c759d26`의 파일을 그대로 가져왔다. 테스트는 같은 커밋의 `tests/test_codex_review_gate.py`를 `scripts/test-codex-review-gate`로 옮겼다. 저장소 이름, 실행 진입점, bytecode·최적화 차단만 다르다. 원본 갱신을 따라가기 쉽도록 두 Python 파일은 Ruff 포맷 대상에 넣지 않는다. 테스트는 pre-commit과 `codex-review-gate-tests` GitHub job에서 실행한다. 표준 라이브러리와 `gh`만 사용한다.
+`scripts/codex_review_gate.py`와 `.github/workflows/codex-review-gate.yml`은 sensibile/taeguk main `c759d26`의 파일을 그대로 가져왔다. 테스트는 같은 커밋의 `tests/test_codex_review_gate.py`를 `scripts/test-codex-review-gate`로 옮겼다. 저장소 이름, 실행 진입점, bytecode·최적화 차단만 다르다. 원본 갱신을 따라가기 쉽도록 두 Python 파일은 Ruff 포맷 대상에 넣지 않는다. `scripts/test-codex-review-gate-adapter`는 acropolis 전용 계약·격리 통합 테스트다. 같은 시나리오를 `FakeGitHub`와, PATH의 stub `gh`를 쓰는 실제 `gh()` adapter로 각각 실행해 호출 argv와 결과·오류가 같은지 확인한다(PR 9 Codex 지적, AGENTS.md의 fake 계약 테스트 요구). 실제 GitHub API 호출은 토큰과 네트워크가 필요해 포함하지 않는다. 두 테스트는 pre-commit과 `codex-review-gate-tests` GitHub job에서 실행한다. 표준 라이브러리와 `gh`만 사용한다.
 
 위 Push 준비로 push한 뒤 PR을 맡은 Claude Code 세션이 다음 순서로 진행한다. 리뷰 요청과 머지는 세션의 `gh` 인증 계정인 BOSS 계정으로 한다(2026-10-25 BOSS 결정). Codex는 `github-actions[bot]`의 요청에는 응답하지 않았고 사람 계정 요청에는 13초~2분 안에 응답했다(sensibile/taeguk 관측).
 

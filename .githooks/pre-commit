@@ -10,4 +10,5 @@ python3 ./scripts/check-config
 CHECK_PYTHON_FORMAT=check ./scripts/check-python
 python3 ./scripts/test-push-boundary
 python3 ./scripts/test-codex-review-gate
+python3 ./scripts/test-codex-review-gate-adapter
 exec python3 ./scripts/test-documentation-gate
