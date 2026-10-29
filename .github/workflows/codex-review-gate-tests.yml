@@ -1,0 +1,19 @@
+name: Codex review gate tests
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+jobs:
+  codex-review-gate-tests:
+    name: codex-review-gate-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Run gate behavior tests
+        run: python3 scripts/test-codex-review-gate
+      - name: Run real gh adapter contract tests
+        run: python3 scripts/test-codex-review-gate-adapter
