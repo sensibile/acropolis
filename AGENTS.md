@@ -24,13 +24,14 @@
 - 같은 불변 범위를 현재 Codex가 자체 리뷰한다. 실제 버그·회귀·권한 경계와 검증 근거를 확인하고 결과를 기록한다. 자체 리뷰를 독립 리뷰라고 표시하지 않는다. 독립 리뷰는 BOSS가 별도로 요청했을 때 수행한다.
 - 기본 Codex 보안 검사와 자체 리뷰는 승인된 개발·push 작업의 일부로 진행한다. 별도 외부 서비스나 모델을 사용하는 경우에만 데이터 전달 범위를 설명하고 승인받는다.
 - `review-gate record PLAN_JSON COMPLETED_SCAN_DIR AGENT_JSON`으로 완료 결과를 등록한다. Git pre-push가 canonical seal과 범위·내용 변경을 다시 검증한다. 수동 security pass는 허용하지 않는다.
+- 코드나 실행 동작에 영향을 주는 변경은 같은 누적 범위에 `taeguk_codex_cross_reviewer` 교차 리뷰를 추가한다. 로컬 Codex 리뷰 전송은 acropolis 작업에 대한 상시 허용이다(2026-10-29 BOSS 결정). PR 리뷰와 auto-merge 절차는 DEVELOPMENT.md의 PR 리뷰와 머지를 따른다.
 - 검사 누락/범위 축소/미해결 coverage/취약점이 있으면 차단한다. 발견 사항을 자동 무시하지 않는다. 검사 이후 커밋이 바뀌면 새 계획과 새 검사를 수행한다.
 - submodule 커밋의 보안은 상위 포인터 검사만으로 보증되지 않는다. 각 하위 저장소를 별도로 검사하고 push한다.
 
 ## 공통 문서 gate 및 브랜치 정책
 
 - 새 브랜치는 `feat|fix|refactor|test|docs|chore` 중 작업 의도에 맞는 `<type>/<short-task-slug>`를 사용한다. `codex/` 기본값보다 우선한다.
-- [문서 작업 규칙](docs/documentation-policy.md)을 적용한다. 문서 전용 작업은 문서 gate를 통과하면 push 전 로컬 보안 검사와 Codex 자체·독립 리뷰를 생략한다. PR의 GitHub Codex 리뷰와 `codex-review` status는 문서 전용 PR에도 적용한다(DEVELOPMENT.md의 Codex 리뷰 gate). 코드 또는 실행 설정 변경이 섞이면 기존 리뷰 절차를 적용한다.
+- [문서 작업 규칙](docs/documentation-policy.md)을 적용한다. 문서 전용 작업은 문서 gate를 통과하면 push 전 로컬 보안 검사와 Codex 자체·교차·독립 리뷰를 생략한다. 코드 또는 실행 설정 변경이 섞이면 기존 리뷰 절차를 적용한다.
 - 문서 gate 구현·변경 자체는 코드 작업이다. 자동 commit 권한이 코드 push·merge나 실패한 gate 우회를 허용하지 않는다.
 
 ## 작업 승인 기록과 PR 전달
