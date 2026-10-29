@@ -34,9 +34,6 @@ for script in (
     "test-push-gate",
     "test-push-boundary",
     "check-config",
-    "codex_review_gate.py",
-    "test-codex-review-gate",
-    "test-codex-review-gate-adapter",
 ):
     ast.parse(Path("scripts", script).read_text())
 print("PASS: submodule configuration, guidance and gate syntax")
