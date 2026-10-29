@@ -1,16 +1,19 @@
 {
   "schema_version": 1,
-  "source_version": "8dbf62681faf14771c86b86dddc2d1b5f0378d33",
-  "link_pin": "8dbf62681faf14771c86b86dddc2d1b5f0378d33",
+  "source_version": "f480b63075cd34a320c4ee3accc57b746cb92bd3",
+  "link_pin": "f480b63075cd34a320c4ee3accc57b746cb92bd3",
   "files": {
-    ".taeguk/rules/approvals.md": "b6bb38875a5fbce9af6e925cb7d8674e69a87b73e96c5fc6e0cdd743885c04dd",
+    ".taeguk/rules/approvals.md": "45f7d844755114b5d9ecbd45f44498d5c058fbc05c2063d456468f3b7214c825",
     ".taeguk/rules/delivery.md": "66a66923fb3296d7f286d8845883c5678375b578e9fc00d0b7bc6bb7df80c68d",
     ".taeguk/rules/governance.md": "98adb27880316ba215426c136e80335b00e1673fc41228330ec3141b30be0ffc",
-    ".taeguk/rules/index.md": "18f55ffdc005bba56464ffbb514b588a62e1fd5235aba4a4dc16d388963c4f66",
-    ".taeguk/rules/mechanical-checks.md": "fdef2952de9230ecf6d0b4ac2ab589e3ec515310d13f36bbac8c4a24f9934d84",
-    ".taeguk/rules/proposals/index.md": "731d47fd6930f7dc4fa31a01303e87201bbfafab7785a39660d3ee10db13a878",
+    ".taeguk/rules/index.md": "1014a23c145c0c5817e815a45d0b1a790e929e5c59c991df69f55cc1d9f4bb38",
+    ".taeguk/rules/mechanical-checks.md": "5bdbde14f02546fc4d24f13b9126cb2d3b9e87948453dd4399a1715412a09a54",
+    ".taeguk/rules/proposals/archon-pilot.md": "17a04d16047ccb26dec8ac056f522ba2726bb08936bf448e1d1840fa7c5b4170",
+    ".taeguk/rules/proposals/coverage-as-instrument.md": "ff17cbf44e058a01015f7387a56f2494c560535f33ba46294dbf2f896306ff7e",
+    ".taeguk/rules/proposals/index.md": "a0fd03463f43f8dfc40a46335aa3a2a078e12018f63d814f8fa389924ab9bb6d",
     ".taeguk/rules/proposals/intent-requirement-records.md": "004be0b10f188ea1ccfebfe49dbb1ec7f825e228e028531c46113d0a36420a86",
-    ".taeguk/rules/registry.toml": "5448dd9f41079b3a993e6092276c6e4c05c644829bdd6adfcaf32c38c43d23de",
-    ".taeguk/rules/verification.md": "d94b7b39b86b7788254033615aa929952494899126bff0bfa7af8e0dcbfbaea2"
+    ".taeguk/rules/proposals/review-loop-exit.md": "66a7af82eff3644e4ae59477cbc7b8d88f75934929bdf476d09e52895ec89122",
+    ".taeguk/rules/registry.toml": "6fc76adeb33cb00c22b6da8d9061da78826c87d7fdfa79fa22734235ffa5bffe",
+    ".taeguk/rules/verification.md": "da9a550eb5de5c2064486400bdcab6601a4091b918d03bf96fa4b0c439509d2d"
   }
 }
